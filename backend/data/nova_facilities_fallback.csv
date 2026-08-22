@@ -1,0 +1,11 @@
+id,name,lat,lon,state,county
+equinix-ashburn-dc1,Equinix Ashburn DC1,39.0155285,-77.4603410,VA,Loudoun
+equinix-ashburn-dc2,Equinix Ashburn DC2,39.0163313,-77.4587623,VA,Loudoun
+equinix-ashburn-dc4,Equinix Ashburn DC4,39.0163151,-77.4619027,VA,Loudoun
+equinix-ashburn-dc22,Equinix Ashburn DC22,39.0133252,-77.4538013,VA,Loudoun
+digital-realty-iad39,Digital Realty Northern Virginia IAD39,39.0076364,-77.4674725,VA,Loudoun
+qts-manassas-dc1,QTS Manassas DC1,38.7405457,-77.5066093,VA,Prince William
+vantage-va11,Vantage VA11 (Ashburn I Campus),39.0023686,-77.4376872,VA,Loudoun
+vantage-ashburn-iii,Vantage Ashburn III Campus,39.0599793,-77.5127854,VA,Loudoun
+cloudhq-lc1,CloudHQ LC1,39.0102521,-77.4627545,VA,Loudoun
+cloudhq-lc4,CloudHQ LC4,39.0023212,-77.4718863,VA,Loudoun

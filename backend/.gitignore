@@ -1,5 +1,6 @@
 .env
 __pycache__/
 *.pyc
-data/
+data/*
+!data/nova_facilities_fallback.csv
 .venv/
