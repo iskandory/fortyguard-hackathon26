@@ -1,5 +1,5 @@
-requests>=2.31
-supabase>=2.4
-python-dotenv>=1.0
-pytest>=8.0
-responses>=0.25
+requests==2.34.2
+supabase==2.31.0
+python-dotenv==1.2.3
+pytest==9.1.1
+responses==0.26.2
