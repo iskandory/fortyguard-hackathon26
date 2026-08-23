@@ -21,7 +21,15 @@ def run(client: FortyGuardClient, facilities: list[dict]) -> None:
         tcm_result = client.heatmap(
             polygon_aoi=aoi, start_date=start_date, filter_type=1, start_time=start_time,
         )
-        air_temp_c = tcm_result["stats_data"]["temperature_stats"]["mean"]
+        temperature_stats = tcm_result["stats_data"].get("temperature_stats")
+        if temperature_stats is None:
+            # FortyGuard hasn't published TCM data for this time offset yet
+            # (seen as {"n_cells": 0} with no temperature_stats key) -- this
+            # is legitimately-missing data, not an error, so skip this
+            # facility this cycle rather than crashing the whole run.
+            print(f"  {facility['id']}: no TCM data yet for {start_date} {start_time}, skipping")
+            continue
+        air_temp_c = temperature_stats["mean"]
 
         env_result = client.env_params(
             latitude=facility["lat"], longitude=facility["lon"], temperature=air_temp_c,

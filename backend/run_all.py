@@ -29,11 +29,21 @@ def main() -> None:
     # calls with the real current temperature instead of falling back to its
     # hardcoded 30.0 default. The same select also builds the Fahrenheit
     # lookup nws_etl needs below, so facility_readings is only queried once.
+    # facility_readings is unique on (facility_id, ts), not one row per
+    # facility -- it's an accumulating time series -- so order newest-first
+    # and keep only the first (most recent) row seen per facility_id.
     supabase = get_supabase()
-    latest = supabase.table("facility_readings").select("facility_id,air_temp_c").execute().data
-    current_air_temp_c = {
-        row["facility_id"]: row["air_temp_c"] for row in latest if row["air_temp_c"] is not None
-    }
+    latest = (
+        supabase.table("facility_readings")
+        .select("facility_id,air_temp_c")
+        .order("ts", desc=True)
+        .execute()
+        .data
+    )
+    current_air_temp_c: dict[str, float] = {}
+    for row in latest:
+        if row["air_temp_c"] is not None and row["facility_id"] not in current_air_temp_c:
+            current_air_temp_c[row["facility_id"]] = row["air_temp_c"]
     for facility in facilities:
         if facility["id"] in current_air_temp_c:
             facility["current_air_temp_c"] = current_air_temp_c[facility["id"]]
