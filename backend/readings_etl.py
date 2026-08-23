@@ -1,8 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from fortyguard_client import FortyGuardClient
 from geo import point_to_aoi
 from supabase_client import get_supabase
+
+TCM_LAG_HOURS = 36  # FortyGuard publishes TCM ~24-30h behind wall clock; 36h margin
 
 
 def _last_non_null(series: list) -> float | None:
@@ -11,9 +13,9 @@ def _last_non_null(series: list) -> float | None:
 
 def run(client: FortyGuardClient, facilities: list[dict]) -> None:
     supabase = get_supabase()
-    now = datetime.now(timezone.utc)
-    start_date = now.strftime("%Y-%m-%d")
-    start_time = now.strftime("%H:00")
+    observed_at = datetime.now(timezone.utc) - timedelta(hours=TCM_LAG_HOURS)
+    start_date = observed_at.strftime("%Y-%m-%d")
+    start_time = observed_at.strftime("%H:00")
 
     for facility in facilities:
         aoi = point_to_aoi(facility["lat"], facility["lon"])
@@ -42,7 +44,7 @@ def run(client: FortyGuardClient, facilities: list[dict]) -> None:
 
         supabase.table("facility_readings").upsert({
             "facility_id": facility["id"],
-            "ts": now.isoformat(),
+            "ts": observed_at.isoformat(),
             "air_temp_c": air_temp_c,
             "wet_bulb_c": wet_bulb_c,
             "heat_index_c": heat_index_c,
