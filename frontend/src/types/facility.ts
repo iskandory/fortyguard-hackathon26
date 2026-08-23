@@ -12,16 +12,16 @@ export interface FacilitySummary {
   lon: number;
   state: string;
   county: string;
-  current_air_temp_c: number;
-  current_wet_bulb_c: number;
+  current_air_temp_c: number | null; // null when no reading has landed yet
+  current_wet_bulb_c: number | null; // null when no reading has landed yet
   hours_exceeded_season: number; // exceedance analytic
   longest_run_hours: number; // persistence analytic
   risk_tier: RiskTier;
   headroom_score: number; // 0–100, lower = less cooling headroom left
   peak_derating_next_12h_pct: number; // forward signal from the 12h forecast
-  nws_grid_temp_f: number;
-  fortyguard_local_temp_f: number;
-  delta_f: number; // fortyguard - nws
+  nws_grid_temp_f: number | null; // null when no NWS comparison exists yet
+  fortyguard_local_temp_f: number | null;
+  delta_f: number | null; // fortyguard - nws
 }
 
 /** Supabase view `facility_forecast` — one row per facility per hour. */

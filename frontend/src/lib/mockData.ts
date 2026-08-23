@@ -126,7 +126,7 @@ export const mockForecast: ForecastPoint[] = mockFacilities.flatMap((f) =>
       facility_id: f.id,
       forecast_hour: hour,
       predicted_wet_bulb_c:
-        Math.round((f.current_wet_bulb_c - 2 + drift) * 10) / 10,
+        Math.round(((f.current_wet_bulb_c ?? 0) - 2 + drift) * 10) / 10,
       predicted_derating_pct: Math.max(
         0,
         Math.round(f.peak_derating_next_12h_pct * (hour / 11)),

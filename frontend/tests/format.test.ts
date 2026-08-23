@@ -13,11 +13,17 @@ describe('celsiusToFahrenheit', () => {
   it('converts 100C to 212F', () => {
     expect(celsiusToFahrenheit(100)).toBe(212);
   });
+  it('does not coerce a missing reading to 0C', () => {
+    expect(celsiusToFahrenheit(null)).toBe(null);
+  });
 });
 
 describe('formatTempF', () => {
   it('rounds to the nearest degree with a unit suffix', () => {
     expect(formatTempF(24.8)).toBe('77°F');
+  });
+  it('renders a missing reading as a dash, not 32F', () => {
+    expect(formatTempF(null)).toBe('—');
   });
 });
 
@@ -36,5 +42,8 @@ describe('formatDelta', () => {
   });
   it('leaves negative deltas with their native sign', () => {
     expect(formatDelta(-0.6)).toBe('-0.6°F');
+  });
+  it('renders a missing comparison as a dash, not 0F', () => {
+    expect(formatDelta(null)).toBe('—');
   });
 });

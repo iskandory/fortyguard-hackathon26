@@ -14,6 +14,15 @@ interface NwsDeltaCalloutProps {
 export function NwsDeltaCallout({ facility }: NwsDeltaCalloutProps) {
   if (!facility) return null;
 
+  if (facility.delta_f === null) {
+    return (
+      <div className="nws-delta nws-delta--empty">
+        <p className="nws-delta__title">Official grid vs. this site</p>
+        <p className="nws-delta__delta">No NWS comparison yet for this site.</p>
+      </div>
+    );
+  }
+
   const color = deltaColor(facility.delta_f);
 
   return (
