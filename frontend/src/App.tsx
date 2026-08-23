@@ -4,7 +4,6 @@ import { useFacilityForecast } from './hooks/useFacilityForecast';
 import { MapView } from './components/MapView';
 import { RankingList } from './components/RankingList';
 import { FacilityPanel } from './components/FacilityPanel';
-import { NwsDeltaCallout } from './components/NwsDeltaCallout';
 import { ForecastDial } from './components/ForecastDial';
 import { Legend } from './components/Legend';
 
@@ -67,7 +66,6 @@ export default function App() {
         <section className="rail-section" aria-label="Selected facility readout">
           <h3 className="rail-section__title">Site readout</h3>
           <FacilityPanel facility={selected} forecast={forecast} />
-          <NwsDeltaCallout facility={selected} />
         </section>
       </aside>
     </div>

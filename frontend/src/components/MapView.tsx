@@ -54,8 +54,9 @@ const FALLBACK_STYLE: StyleSpecification = {
  * Full-bleed 3D map — deck.gl ColumnLayer over a MapLibre basemap.
  * Columns are extruded by headroom loss and colored by the sequential
  * amber/copper ramp; scrubbing the forecast dial recolors/re-heights live.
- * Name labels ride above each column so sites stay identifiable even if
- * the basemap tiles are blocked.
+ * Only the selected/hovered column gets a floating name label — labeling
+ * every site at once collides into an unreadable pile wherever facilities
+ * cluster tightly (e.g. Ashburn/Sterling).
  */
 export function MapView({
   facilities,
@@ -70,6 +71,7 @@ export function MapView({
   const selectRef = useRef(onSelect);
   selectRef.current = onSelect;
   const [basemapFailed, setBasemapFailed] = useState(false);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -125,10 +127,16 @@ export function MapView({
           onClick: (info) => {
             if (info.object) selectRef.current((info.object as FacilitySummary).id);
           },
+          onHover: (info) => {
+            setHoveredId(info.object ? (info.object as FacilitySummary).id : null);
+          },
         }),
         new TextLayer<FacilitySummary>({
           id: 'facility-labels',
-          data: facilities,
+          // Only the selected/hovered facility is labeled — with ten sites,
+          // labeling everyone at once collides into an unreadable pile
+          // wherever facilities cluster (e.g. Ashburn/Sterling).
+          data: facilities.filter((f) => f.id === selectedId || f.id === hoveredId),
           getPosition: (f) => [f.lon, f.lat, columnTopMeters(f, forecastHour) + 140],
           getText: (f) => f.name,
           getSize: 13,
@@ -142,7 +150,7 @@ export function MapView({
         }),
       ],
     });
-  }, [facilities, selectedId, forecastHour]);
+  }, [facilities, selectedId, hoveredId, forecastHour]);
 
   return (
     <div className="map-wrap">

@@ -57,16 +57,3 @@ export type { RiskTierName };
 export function riskTierColor(tier: RiskTierName): string {
   return RISK_TIER_COLORS[tier];
 }
-
-// Diverging: two hues + neutral gray midpoint, for the signed
-// NWS-vs-FortyGuard delta. Never used as a sequential ramp.
-const DELTA_COOL = '#3e7cb1';
-const DELTA_NEUTRAL = '#8b93a1';
-const DELTA_WARM = '#c6493d';
-
-export function deltaColor(deltaF: number): string {
-  const clamped = Math.max(-10, Math.min(10, deltaF));
-  if (clamped === 0) return DELTA_NEUTRAL;
-  const t = Math.abs(clamped) / 10;
-  return interpolateHex(DELTA_NEUTRAL, clamped > 0 ? DELTA_WARM : DELTA_COOL, t);
-}

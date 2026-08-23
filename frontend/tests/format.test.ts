@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  celsiusToFahrenheit,
-  formatTempF,
-  formatHours,
-  formatDelta,
-} from '../src/lib/format';
+import { celsiusToFahrenheit, formatTempF, formatHours } from '../src/lib/format';
 
 describe('celsiusToFahrenheit', () => {
   it('converts 0C to 32F', () => {
@@ -33,17 +28,5 @@ describe('formatHours', () => {
   });
   it('shows one decimal for an hour or more', () => {
     expect(formatHours(9.5)).toBe('9.5 hrs');
-  });
-});
-
-describe('formatDelta', () => {
-  it('signs positive deltas explicitly', () => {
-    expect(formatDelta(5.4)).toBe('+5.4°F');
-  });
-  it('leaves negative deltas with their native sign', () => {
-    expect(formatDelta(-0.6)).toBe('-0.6°F');
-  });
-  it('renders a missing comparison as a dash, not 0F', () => {
-    expect(formatDelta(null)).toBe('—');
   });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { headroomColor, riskTierColor, deltaColor } from '../src/lib/colorScale';
+import { headroomColor, riskTierColor } from '../src/lib/colorScale';
 
 describe('headroomColor', () => {
   it('returns the palest stop at full headroom (score 100)', () => {
@@ -22,17 +22,5 @@ describe('riskTierColor', () => {
       riskTierColor('critical'),
     ]);
     expect(colors.size).toBe(3);
-  });
-});
-
-describe('deltaColor', () => {
-  it('returns neutral gray at zero delta', () => {
-    expect(deltaColor(0)).toBe('#8b93a1');
-  });
-  it('warms toward the hot pole for positive delta', () => {
-    expect(deltaColor(10)).toBe('#c6493d');
-  });
-  it('cools toward the cold pole for negative delta', () => {
-    expect(deltaColor(-10)).toBe('#3e7cb1');
   });
 });
