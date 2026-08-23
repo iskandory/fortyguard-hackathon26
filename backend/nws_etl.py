@@ -39,6 +39,7 @@ def fetch_nws_temp_f(lat: float, lon: float, observed_at: datetime | None = None
         if windowed_features:
             temp_c = windowed_features[0]["properties"]["temperature"]["value"]
 
+    used_fallback = observed_at is not None and temp_c is None
     if temp_c is None:
         obs_resp = requests.get(
             f"https://api.weather.gov/stations/{station_id}/observations/latest", headers=headers, timeout=15,
@@ -48,6 +49,8 @@ def fetch_nws_temp_f(lat: float, lon: float, observed_at: datetime | None = None
 
     if temp_c is None:
         return None
+    if used_fallback:
+        print(f"  {station_id}: no windowed observation near {observed_at.isoformat()}, fell back to latest")
     return round(temp_c * 9 / 5 + 32, 1)
 
 
