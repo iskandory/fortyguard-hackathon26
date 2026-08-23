@@ -41,25 +41,36 @@ def run(client: FortyGuardClient, facilities: list[dict]) -> None:
     now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
 
     for facility in facilities:
-        hour_offset = 0
-        for range_start, range_end in _same_day_ranges(now, FORECAST_HOURS):
-            env_result = client.env_params(
-                latitude=facility["lat"], longitude=facility["lon"],
-                temperature=facility.get("current_air_temp_c") or 30.0,
-                start_date=range_start.strftime("%Y-%m-%d"), filter_type=2,
-                start_time=range_start.strftime("%H:00"), end_time=range_end.strftime("%H:00"),
-                analysis=["wet_bulb_temperature_celsius"],
-            )
-            location = env_result["locations"][0]
-            timestamps = env_result["metadata"]["timestamps"]
-            wet_bulb_series = location["parameters"].get("wet_bulb_temperature_celsius", [])
+        try:
+            hour_offset = 0
+            for range_start, range_end in _same_day_ranges(now, FORECAST_HOURS):
+                env_result = client.env_params(
+                    latitude=facility["lat"], longitude=facility["lon"],
+                    temperature=facility.get("current_air_temp_c") or 30.0,
+                    start_date=range_start.strftime("%Y-%m-%d"), filter_type=2,
+                    start_time=range_start.strftime("%H:00"), end_time=range_end.strftime("%H:00"),
+                    analysis=["wet_bulb_temperature_celsius"],
+                )
+                locations = env_result.get("locations") or []
+                if not locations:
+                    print(f"  {facility['id']}: no locations in env_params response, skipping")
+                    continue
+                location = locations[0]
+                timestamps = env_result.get("metadata", {}).get("timestamps")
+                if not timestamps:
+                    print(f"  {facility['id']}: no timestamps in env_params response, skipping")
+                    continue
+                wet_bulb_series = location["parameters"].get("wet_bulb_temperature_celsius", [])
 
-            for ts, wet_bulb_c in zip(timestamps, wet_bulb_series):
-                supabase.table("facility_forecast").upsert({
-                    "facility_id": facility["id"],
-                    "forecast_ts": ts,
-                    "forecast_hour": hour_offset,
-                    "predicted_wet_bulb_c": wet_bulb_c,
-                    "predicted_derating_pct": derate_from_wet_bulb(wet_bulb_c),
-                }, on_conflict="facility_id,forecast_hour").execute()
-                hour_offset += 1
+                for ts, wet_bulb_c in zip(timestamps, wet_bulb_series):
+                    supabase.table("facility_forecast").upsert({
+                        "facility_id": facility["id"],
+                        "forecast_ts": ts,
+                        "forecast_hour": hour_offset,
+                        "predicted_wet_bulb_c": wet_bulb_c,
+                        "predicted_derating_pct": derate_from_wet_bulb(wet_bulb_c),
+                    }, on_conflict="facility_id,forecast_hour").execute()
+                    hour_offset += 1
+        except Exception as exc:
+            print(f"  {facility['id']}: forecast fetch failed ({exc}), skipping")
+            continue
