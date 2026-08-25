@@ -6,14 +6,16 @@ import { ColumnLayer, TextLayer } from '@deck.gl/layers';
 import type { FacilitySummary } from '../types/facility';
 import { headroomColor } from '../lib/colorScale';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 
 // MapLibre resolves its worker via `new URL(computedName, import.meta.url)`,
 // which Rollup can't statically detect (only literal-string new URL() calls
 // get copied as build assets) — so the production bundle silently ships with
-// no worker script, and the map renders with no tiles at all. Importing the
-// worker explicitly via Vite's `?url` forces it into the build output, and
-// pointing MapLibre at that URL overrides its broken auto-detection.
+// no worker script, and the map renders with no tiles at all. `?worker&url`
+// makes Vite actually bundle the worker's module graph (it has its own
+// static import of maplibre-gl-shared.mjs — a plain `?url` copy leaves that
+// import unresolved too) and hand back the built chunk's URL; setWorkerUrl()
+// points MapLibre at it, overriding its broken auto-detection.
 setWorkerUrl(maplibreWorkerUrl);
 
 interface MapViewProps {
