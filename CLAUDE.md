@@ -54,7 +54,4 @@ Frontend reads a consolidated view, `facility_summary` (one row per facility: la
 - **Secrets:** the FortyGuard API key lives only in Supabase Edge Function secrets, never in `.env` files that get committed, never in frontend code. `.env` must be gitignored before the first commit — a visible key is a stated hackathon disqualification.
 - **GeoJSON/coordinates are `[longitude, latitude]`** everywhere in this project, matching the FortyGuard API convention.
 
-## Plans
-
-- Frontend: `docs/superpowers/plans/2026-08-22-frontend-implementation.md`
-- Backend: `docs/superpowers/plans/2026-08-22-backend-implementation.md`
+Implementation plans (frontend and backend) are kept locally under `docs/superpowers/plans/` and are gitignored — not part of the tracked repo.

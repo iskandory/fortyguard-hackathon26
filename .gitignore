@@ -24,3 +24,6 @@ backend/__pycache__/
 Thumbs.db
 .vscode/
 .idea/
+
+# Internal planning docs — not part of the submission
+docs/superpowers/plans/
