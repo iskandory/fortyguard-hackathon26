@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { Map as MapLibreMap, NavigationControl } from 'maplibre-gl';
+import { Map as MapLibreMap, NavigationControl, setWorkerUrl } from 'maplibre-gl';
 import type { IControl, StyleSpecification } from 'maplibre-gl';
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import { ColumnLayer, TextLayer } from '@deck.gl/layers';
 import type { FacilitySummary } from '../types/facility';
 import { headroomColor } from '../lib/colorScale';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
+
+// MapLibre resolves its worker via `new URL(computedName, import.meta.url)`,
+// which Rollup can't statically detect (only literal-string new URL() calls
+// get copied as build assets) — so the production bundle silently ships with
+// no worker script, and the map renders with no tiles at all. Importing the
+// worker explicitly via Vite's `?url` forces it into the build output, and
+// pointing MapLibre at that URL overrides its broken auto-detection.
+setWorkerUrl(maplibreWorkerUrl);
 
 interface MapViewProps {
   facilities: FacilitySummary[];
