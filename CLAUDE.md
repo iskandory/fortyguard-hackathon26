@@ -10,7 +10,7 @@ A submission for the FortyGuard × NVIDIA Hackathon'26 ("Building the World's Te
 
 **City / asset set:** Northern Virginia (highest data-centre density in the US — real facility data is dense here, via the PNNL Data Center Atlas).
 
-Full strategy, competitive landscape, judging criteria, and rationale: `HACKATHON_BRIEF.md` (kept locally, gitignored — not part of the tracked repo). FortyGuard API details: `API_REFERENCE.md` (same — gitignored) — note its stated historical floor of 2019-01-01 is wrong, three independent sources say 2021-01-01, use 2021.
+Full strategy, competitive landscape, judging criteria, and rationale: `HACKATHON_BRIEF.md` (kept locally, gitignored — not part of the tracked repo, since it's competitive/judge-strategy analysis with no value to someone evaluating the code). FortyGuard API details: [API_REFERENCE.md](API_REFERENCE.md) — note its stated historical floor of 2019-01-01 is wrong, three independent sources say 2021-01-01, use 2021.
 
 ## Team
 
