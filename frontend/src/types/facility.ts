@@ -14,8 +14,14 @@ export interface FacilitySummary {
   county: string;
   current_air_temp_c: number | null; // null when no reading has landed yet
   current_wet_bulb_c: number | null; // null when no reading has landed yet
-  hours_exceeded_season: number; // exceedance analytic
-  longest_run_hours: number; // persistence analytic
+  // Exceedance/persistence are computed by /v1/heatmap's analytics, which
+  // operate on AIR TEMPERATURE, not wet-bulb (wet-bulb has no area-analytic
+  // form -- it only comes per-point from /v1/env_params). Label them as
+  // air-temp figures in the UI; conflating them with the wet-bulb thesis is
+  // what made the panel read as self-contradictory.
+  hours_exceeded_season: number; // hours of air temp past exceedance_threshold_c
+  longest_run_hours: number; // longest unbroken run of those hours
+  exceedance_threshold_c: number | null; // the threshold the two above were computed against
   risk_tier: RiskTier;
   headroom_score: number; // 0–100, lower = less cooling headroom left
   peak_derating_next_12h_pct: number; // forward signal from the 12h forecast

@@ -25,6 +25,16 @@ export function FacilityPanel({ facility, forecast }: FacilityPanelProps) {
     null,
   );
 
+  // The seasonal figures come from /v1/heatmap's exceedance and persistence
+  // analytics, which run on air temperature; derating comes from forecast
+  // wet-bulb. Naming the quantity in each label is the whole point -- an
+  // unqualified "threshold" put an air-temp hour count directly above a
+  // wet-bulb derating readout and made the panel contradict itself.
+  const thresholdLabel =
+    facility.exceedance_threshold_c === null
+      ? 'threshold'
+      : formatTempF(facility.exceedance_threshold_c);
+
   return (
     <div className="facility-panel">
       <header className="facility-panel__header">
@@ -52,11 +62,11 @@ export function FacilityPanel({ facility, forecast }: FacilityPanelProps) {
           <dd>{formatTempF(facility.current_wet_bulb_c)}</dd>
         </div>
         <div>
-          <dt>Hours over threshold this season</dt>
+          <dt>Hours above {thresholdLabel} air temp · season</dt>
           <dd>{formatHours(facility.hours_exceeded_season)}</dd>
         </div>
         <div>
-          <dt>Longest continuous run</dt>
+          <dt>Longest unbroken run above {thresholdLabel}</dt>
           <dd>{formatHours(facility.longest_run_hours)}</dd>
         </div>
       </dl>
@@ -87,7 +97,9 @@ export function FacilityPanel({ facility, forecast }: FacilityPanelProps) {
       </div>
 
       <div className="derating-signal" data-testid="derating-signal">
-        <span className="derating-signal__label">Peak derating · next 12h</span>
+        <span className="derating-signal__label">
+          Peak derating · next 12h <em>(from forecast wet-bulb)</em>
+        </span>
         <span className="derating-signal__value">
           −{facility.peak_derating_next_12h_pct}% thermal capacity
         </span>

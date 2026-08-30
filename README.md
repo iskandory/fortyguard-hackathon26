@@ -17,7 +17,7 @@ Wet-bulb is the physical floor on evaporative cooling: it is the lowest temperat
 Two facts make this a siting problem rather than a weather problem:
 
 1. **Wet-bulb varies at street scale.** Two campuses eight kilometres apart, one beside a river and one in the middle of an asphalt corridor, do not share a cooling risk profile. Airport-station weather data cannot resolve that difference — it is reported at one point and interpolated across tens of kilometres.
-2. **Duration matters more than peak.** A single hour above the design wet-bulb is survivable; thermal mass absorbs it. Thirty unbroken hours is a derate, because the plant never gets a cool night to recover. Peak temperature is widely reported. **Persistence is not.**
+2. **Duration matters more than peak.** A single hour above the design threshold is survivable; thermal mass absorbs it. Thirty unbroken hours is a derate, because the plant never gets a cool night to recover. Peak temperature is widely reported. **Persistence is not.**
 
 ## What it does
 
@@ -25,14 +25,16 @@ For every facility in the corridor, the console answers four questions:
 
 | Question | Metric |
 |---|---|
-| How often does this site exceed its cooling design wet-bulb? | `hours_exceeded` over the season |
+| How often does this site run hot? | `hours_exceeded` — hours of air temperature past the threshold, over the season |
 | What is the worst uninterrupted stretch? | `longest_run_hours` — the persistence signal |
 | How much cooling margin is left overall? | `headroom_score`, 0–100, and a safe/watch/critical tier |
 | Is tomorrow afternoon going to cost me capacity? | 12-hour forecast → `predicted_derating_pct` |
 
 The map extrudes each facility as a column whose height is headroom *lost*, so the corridor's risk profile is legible at a glance. A 12-hour forecast scrubber re-projects every column forward hour by hour, turning "it will be hot tomorrow" into "this site loses this much thermal capacity at this hour."
 
-The cooling design threshold is a configurable parameter (`THRESHOLD_C` in `backend/config.py`, default 26 °C), because the right value differs by facility class and chiller technology. All exceedance and derating figures are computed against it.
+The threshold is a configurable parameter (`THRESHOLD_C` in `backend/config.py`, default 26 °C), because the right value differs by facility class and chiller technology.
+
+**One measurement caveat, stated plainly.** The seasonal exceedance and persistence figures are computed by `/v1/heatmap`'s `exceedance` and `persistence` analytics, which operate on **air temperature** — FortyGuard exposes no area-analytic form of wet-bulb, which is available per-point only through `/v1/env_params`. The forward derating signal *is* computed from forecast wet-bulb. So the console pairs an air-temperature history with a wet-bulb forecast, and the UI labels each number with the quantity it actually measures rather than blurring the two.
 
 ## How FortyGuard data is used
 
