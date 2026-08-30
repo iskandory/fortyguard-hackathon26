@@ -79,6 +79,7 @@ export function MapView({
   const mapRef = useRef<MapLibreMap | null>(null);
   const overlayRef = useRef<MapboxOverlay | null>(null);
   const fallbackTriedRef = useRef(false);
+  const fittedRef = useRef(false);
   const selectRef = useRef(onSelect);
   selectRef.current = onSelect;
   const [basemapFailed, setBasemapFailed] = useState(false);
@@ -114,6 +115,32 @@ export function MapView({
       overlayRef.current = null;
     };
   }, []);
+
+  // The initial center/zoom above is a hardcoded guess and sits north of the
+  // corridor's true centroid, leaving the ten facilities as a small cluster
+  // in a mostly-empty frame. Frame them from the data instead, once, so the
+  // opening view is the corridor rather than half of Maryland. Padding is
+  // asymmetric because the legend overlays the top and the forecast scrubber
+  // overlays the bottom of the same container.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || fittedRef.current || facilities.length === 0) return;
+    const lons = facilities.map((f) => f.lon);
+    const lats = facilities.map((f) => f.lat);
+    const bounds: [[number, number], [number, number]] = [
+      [Math.min(...lons), Math.min(...lats)],
+      [Math.max(...lons), Math.max(...lats)],
+    ];
+    const fit = () =>
+      map.fitBounds(bounds, {
+        padding: { top: 90, bottom: 190, left: 90, right: 90 },
+        maxZoom: 11.5,
+        duration: 0,
+      });
+    if (map.isStyleLoaded()) fit();
+    else map.once('load', fit);
+    fittedRef.current = true;
+  }, [facilities]);
 
   useEffect(() => {
     if (!overlayRef.current) return;
