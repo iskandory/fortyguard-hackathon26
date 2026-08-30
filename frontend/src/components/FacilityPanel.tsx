@@ -103,7 +103,7 @@ export function FacilityPanel({ facility, forecast }: FacilityPanelProps) {
         <span className="derating-signal__value">
           −{facility.peak_derating_next_12h_pct}% thermal capacity
         </span>
-        {peakForecast && (
+        {peakForecast && peakForecast.predicted_derating_pct > 0 && (
           <span className="derating-signal__when">
             worst at +{peakForecast.forecast_hour}h
           </span>
