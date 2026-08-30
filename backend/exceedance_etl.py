@@ -16,6 +16,12 @@ def run(client: FortyGuardClient, facilities: list[dict]) -> None:
             aoi = point_to_aoi(facility["lat"], facility["lon"])
             total_hours = 0.0
             max_run = 0.0
+            # Distinguish "measured, and the total was zero" from "every
+            # chunk came back empty". Both used to produce total_hours=0.0
+            # and get written as a real 0, which the UI then scored as
+            # perfect headroom -- so a facility with no coverage at all
+            # ranked as the healthiest site in the corridor.
+            measured = False
 
             for chunk_start, chunk_end in month_chunks(SEASON_START, today):
                 exceedance = client.heatmap(
@@ -38,6 +44,13 @@ def run(client: FortyGuardClient, facilities: list[dict]) -> None:
                     continue
                 total_hours += exceedance_mean
                 max_run = max(max_run, persistence_max)
+                measured = True
+
+            if not measured:
+                # Write nothing: absence of a row is how the view knows this
+                # facility is unmeasured rather than cool.
+                print(f"  {facility['id']}: no exceedance data in any chunk, leaving unrecorded")
+                continue
 
             supabase.table("facility_exceedance").upsert({
                 "facility_id": facility["id"],
