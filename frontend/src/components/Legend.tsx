@@ -1,9 +1,10 @@
 import { riskTierColor, RISK_TIER_SYMBOLS } from '../lib/colorScale';
 
-const TIERS: Array<{ tier: 'safe' | 'watch' | 'critical'; label: string }> = [
+const TIERS: Array<{ tier: 'safe' | 'watch' | 'critical' | 'unknown'; label: string }> = [
   { tier: 'safe', label: 'Safe — normal cooling headroom' },
   { tier: 'watch', label: 'Watch — headroom narrowing' },
   { tier: 'critical', label: 'Critical — near/at cooling limit' },
+  { tier: 'unknown', label: 'No data — not yet measured' },
 ];
 
 export function Legend() {

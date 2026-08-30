@@ -30,6 +30,10 @@ export function FacilityPanel({ facility, forecast }: FacilityPanelProps) {
   // wet-bulb. Naming the quantity in each label is the whole point -- an
   // unqualified "threshold" put an air-temp hour count directly above a
   // wet-bulb derating readout and made the panel contradict itself.
+  // No exceedance data means no score. Rendering 100/100 for a facility the
+  // ETL never measured claims the opposite of what is true.
+  const hasSeasonalData = facility.risk_tier !== 'unknown';
+
   const thresholdLabel =
     facility.exceedance_threshold_c === null
       ? 'threshold'
@@ -63,11 +67,11 @@ export function FacilityPanel({ facility, forecast }: FacilityPanelProps) {
         </div>
         <div>
           <dt>Hours above {thresholdLabel} air temp · season</dt>
-          <dd>{formatHours(facility.hours_exceeded_season)}</dd>
+          <dd>{hasSeasonalData ? formatHours(facility.hours_exceeded_season) : 'No data'}</dd>
         </div>
         <div>
           <dt>Longest unbroken run above {thresholdLabel}</dt>
-          <dd>{formatHours(facility.longest_run_hours)}</dd>
+          <dd>{hasSeasonalData ? formatHours(facility.longest_run_hours) : 'No data'}</dd>
         </div>
       </dl>
 
@@ -82,14 +86,14 @@ export function FacilityPanel({ facility, forecast }: FacilityPanelProps) {
         <div className="headroom-meter__top">
           <span>Cooling headroom</span>
           <span className="headroom-meter__value">
-            {facility.headroom_score} / 100
+            {hasSeasonalData ? `${facility.headroom_score} / 100` : 'No data'}
           </span>
         </div>
         <div className="headroom-meter__track">
           <div
             className="headroom-meter__fill"
             style={{
-              width: `${facility.headroom_score}%`,
+              width: hasSeasonalData ? `${facility.headroom_score}%` : '0%',
               backgroundColor: headroomColor(facility.headroom_score),
             }}
           />

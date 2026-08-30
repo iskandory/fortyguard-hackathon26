@@ -1,4 +1,8 @@
-type RiskTierName = 'safe' | 'watch' | 'critical';
+// 'unknown' = the ETL has no exceedance data for this facility. It is a
+// real state, not a good one: without it a site with zero data renders
+// as a perfect 100 score with a green SAFE badge, i.e. the healthiest
+// site in the corridor.
+type RiskTierName = 'safe' | 'watch' | 'critical' | 'unknown';
 
 function hexToRgb(hex: string): [number, number, number] {
   const n = parseInt(hex.replace('#', ''), 16);
@@ -43,6 +47,7 @@ export const RISK_TIER_COLORS: Record<RiskTierName, string> = {
   safe: '#4c9a6a',
   watch: '#d9a441',
   critical: '#c6493d',
+  unknown: '#6b7280', // neutral grey - deliberately not on the status ramp
 };
 
 // Distinct glyph per tier — state is never encoded by color alone.
@@ -50,6 +55,7 @@ export const RISK_TIER_SYMBOLS: Record<RiskTierName, string> = {
   safe: '✓',
   watch: '!',
   critical: '✕',
+  unknown: '?',
 };
 
 export type { RiskTierName };

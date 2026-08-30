@@ -1,4 +1,4 @@
-export type RiskTier = 'safe' | 'watch' | 'critical';
+export type RiskTier = 'safe' | 'watch' | 'critical' | 'unknown';
 
 /**
  * One row per facility, already joined and pre-computed by the backend ETL
